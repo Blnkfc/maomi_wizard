@@ -333,7 +333,7 @@ export const RandomDrinkPage = () => {
     handleGetIngredients();
   }, []);
 
-  const createStringFromIngredients = (drink: Drink, orderId: number): string => {
+  const createStringFromIngredients = (drink: Drink , orderId: number): string => {
     const base = drink.ingredients.find((ingredient) => ingredient.type === 'base');
     const secondary = drink.ingredients.find((ingredient) => ingredient.type === 'secondary');
     const boba = drink.ingredients.find((ingredient) => ingredient.type === 'boba');
