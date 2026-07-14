@@ -24,6 +24,9 @@ export interface Ingredient {
     saltiness: number;
     compatibleWith: DrinkGroup[];
     availableTemperatures: Temperature[];
+    customizableAmount?: boolean;
+    amountRange?: [number, number] | 'user_specified';
+    assignedColor?: string;
 }
 
 export interface Drink {

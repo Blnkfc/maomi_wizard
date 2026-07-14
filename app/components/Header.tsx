@@ -39,7 +39,7 @@ export const Header = () => {
         initial={{ opacity: 1, height: '100vh', }}
         animate={{ opacity: 1, height: 'auto' }}
         transition={{ duration: 0.5, delay: 0.7, ease: 'easeIn' }}
-        className="flex justify-center items-center p-6! w-full text-white font-bold">
+        className="flex relative justify-center items-center p-6! w-full text-white font-bold z-100">
             <motion.div
             key="logo"
             initial={{ opacity: 0, scale: 0.5 }}
