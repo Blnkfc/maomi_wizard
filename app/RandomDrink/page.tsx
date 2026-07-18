@@ -2,9 +2,10 @@
 
 import { AnimatePresence, motion } from 'framer-motion';
 import { useCreateDrink } from '../hooks/useCreateDrink';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Drink, Ingredient } from '../types/drinks';
 import { BobaSvg } from '../components/BobaSvg';
+import { DrinkConfiguration } from './DrinkConfiguration';
 
 type CupProps = {
   fillColor?: string | string[];
@@ -12,6 +13,7 @@ type CupProps = {
   delay?: number;
   width?: number;
   strokeColor?: string;
+  ref?: React.Ref<SVGSVGElement>;
 };
 
 // const Cup1 = ({ fillColor = '#fff', className, delay = 0, duration = 0.2 }: CupProps & { duration?: number }) => {
@@ -110,7 +112,15 @@ type CupProps = {
 //   );
 // };
 
-const FullCup = ({ fillColor = ['#fff'], className, delay = 0.3, duration = 0.2, width = 133, strokeColor = 'white' }: CupProps & { duration?: number }) => {
+const FullCup = ({
+  fillColor = ['#fff'],
+  className,
+  delay = 0.3,
+  duration = 0.2,
+  width = 133,
+  strokeColor = 'white',
+  ref,
+}: CupProps & { duration?: number }) => {
   const fillColors = Array.isArray(fillColor) ? fillColor : [fillColor];
   const cupFillPath =
     'M0.5 58L5.5 116.6L10.5 172.956L14.5 219.96L18 270.5L114 270.5L118.5 220.04L122.5 173.045L127.5 117.045L132 58Z';
@@ -121,11 +131,21 @@ const FullCup = ({ fillColor = ['#fff'], className, delay = 0.3, duration = 0.2,
 
   return (
     <div className="relative overflow-hidden" style={{ width: safeWidth, height: scaledHeight }}>
-      <svg className={className} width={safeWidth} height={scaledHeight} viewBox="0 0 133 271" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        ref={ref}
+        className={className}
+        width={safeWidth}
+        height={scaledHeight}
+        viewBox="0 0 133 271"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <g style={{ isolation: 'isolate' }}>
           {fillColors.map((color, index) => {
-            const layerDelay = index === 0 ? BASE_COLOR_APPEAR_DELAY : index === 1 ? SECONDARY_COLOR_APPEAR_DELAY : delay;
-            const layerDuration = index === 0 ? BASE_COLOR_APPEAR_DURATION : index === 1 ? SECONDARY_COLOR_APPEAR_DURATION : duration;
+            const layerDelay =
+              index === 0 ? BASE_COLOR_APPEAR_DELAY : index === 1 ? SECONDARY_COLOR_APPEAR_DELAY : delay;
+            const layerDuration =
+              index === 0 ? BASE_COLOR_APPEAR_DURATION : index === 1 ? SECONDARY_COLOR_APPEAR_DURATION : duration;
 
             return (
               <motion.path
@@ -149,7 +169,13 @@ const FullCup = ({ fillColor = ['#fff'], className, delay = 0.3, duration = 0.2,
         />
         <line x1="71.9998" y1="0.508606" x2="94.9998" y2="0.499992" stroke={strokeColor} />
         <line x1="0.498192" y1="57.9579" x2="5.49819" y2="116.6" stroke={strokeColor} />
-        <line y1="-0.5" x2="59.0317" y2="-0.5" transform="matrix(-0.0847002 0.996406 -0.99645 -0.0841867 132 58.0004)" stroke={strokeColor} />
+        <line
+          y1="-0.5"
+          x2="59.0317"
+          y2="-0.5"
+          transform="matrix(-0.0847002 0.996406 -0.99645 -0.0841867 132 58.0004)"
+          stroke={strokeColor}
+        />
         <line x1="5.49802" y1="116.956" x2="10.498" y2="172.956" stroke={strokeColor} />
         <line x1="127.498" y1="117.045" x2="122.498" y2="173.045" stroke={strokeColor} />
         <line x1="10.4982" y1="172.958" x2="14.4982" y2="219.958" stroke={strokeColor} />
@@ -218,31 +244,28 @@ const BOBA_APPEAR_DURATION = 0.5;
 const STATS_APPEAR_DELAY = BOBA_APPEAR_DELAY + BOBA_APPEAR_DURATION + 0.1;
 const STATS_APPEAR_DURATION = 0.3;
 
-const AnimatedBobaCluster = ({ baseColor }: { baseColor: string }) => {
-
-  const bobaPositionsByIndex:Record<number, string> = {
+const AnimatedBobaCluster = ({ baseColor, classname }: { baseColor: string; classname?: string }) => {
+  const bobaPositionsByIndex: Record<number, string> = {
     0: 'absolute top-1/2 left-1/2 translate-x-[-20%] translate-y-[-80%]',
     1: 'absolute top-1/2 left-1/2 translate-x-[-100%] translate-y-[-80%]',
     2: 'absolute top-1/2 left-1/2 translate-x-[-130%] translate-y-[-30%]',
     3: 'absolute top-1/2 left-1/2 translate-x-[-40%] translate-y-[-20%]',
     4: 'absolute top-1/2 left-1/2 translate-x-[35%] translate-y-[-35%]',
-  }
-
+  };
 
   const getRandomY = () => {
-    return Math.floor(Math.random() * 100)+ 75; 
-  }
+    return Math.floor(Math.random() * 100) + 130;
+  };
 
   const getRandomDuration = () => {
-    return Math.floor(Math.random() * 5)/10 + 0.2;
-  }
- 
+    return Math.floor(Math.random() * 5) / 10 + 0.2;
+  };
 
   return (
-    <div className={'absolute bottom-0 w-[158px] h-[75px] '} >
-      {Array.from({length: 5}).map((_, index) => (
+    <div className={`absolute bottom-0 w-[158px] h-[75px] ${classname}`}>
+      {Array.from({ length: 5 }).map((_, index) => (
         <motion.div
-          key={'boba'+index}
+          key={'boba' + index}
           className={bobaPositionsByIndex[index]}
           initial={{ y: getRandomY() }}
           animate={{ y: 0 }}
@@ -252,13 +275,8 @@ const AnimatedBobaCluster = ({ baseColor }: { baseColor: string }) => {
         </motion.div>
       ))}
     </div>
-  )
-}
-
-
-
-
-
+  );
+};
 
 export const RandomDrinkPage = () => {
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -270,10 +288,27 @@ export const RandomDrinkPage = () => {
     bitterness: number;
     saltiness: number;
   } | null>(null);
+  const [orderCompleted, setOrderCompleted] = useState(false);
+  const [orderId, setOrderId] = useState<number | null>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const cupRef = useRef<SVGSVGElement>(null);
+
   const drinkBase = currentDrink?.ingredients.find((ingredient) => ingredient.type === 'base');
   const drinkSecondary = currentDrink?.ingredients.find((ingredient) => ingredient.type === 'secondary');
   const drinkBoba = currentDrink?.ingredients.find((ingredient) => ingredient.type === 'boba');
   console.log('ingredients', ingredients);
+
+  useEffect(() => {
+    if (!drinkStats) return;
+
+    const timer = window.setTimeout(() => {
+      handleScrollToStats();
+    }, STATS_APPEAR_DELAY * 1000);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [drinkStats]);
 
   const parseDBIngredients = (dbIngredients: any[]): Ingredient[] => {
     return dbIngredients.map((dbIngredient) => ({
@@ -333,7 +368,7 @@ export const RandomDrinkPage = () => {
     handleGetIngredients();
   }, []);
 
-  const createStringFromIngredients = (drink: Drink , orderId: number): string => {
+  const createStringFromIngredients = (drink: Drink, orderId: number): string => {
     const base = drink.ingredients.find((ingredient) => ingredient.type === 'base');
     const secondary = drink.ingredients.find((ingredient) => ingredient.type === 'secondary');
     const boba = drink.ingredients.find((ingredient) => ingredient.type === 'boba');
@@ -352,7 +387,6 @@ export const RandomDrinkPage = () => {
   };
 
   const handleRandomizeDrink = () => {
-    const orderId = Math.floor(Math.random() * 1000); // Generate a random order ID
     const drink = randomizeDrink();
     setCurrentDrink(drink);
     console.log('Randomized drink:', drink);
@@ -363,18 +397,50 @@ export const RandomDrinkPage = () => {
       saltiness: drink.ingredients.reduce((acc, ingredient) => acc + ingredient.saltiness, 0),
     };
     setDrinkStats(stats);
-    const message = `${createStringFromIngredients(drink, orderId)}`;
-    handleSendMessage(message);
   };
 
+  const handleRecreateDrink = () => {
+    setCurrentDrink(null);
+    setDrinkStats(null);
+    handleScrollToCup();
+    setTimeout(() => {
+      handleRandomizeDrink();
+    }, 0);
+  };
+
+  const handleSubmitDrink = () => {
+    if (!currentDrink) return;
+    const orderId = Math.floor(Math.random() * 1000); // Generate a random order ID
+    const message = `${createStringFromIngredients(currentDrink, orderId)}`;
+    handleSendMessage(message);
+    setOrderId(orderId);
+    setOrderCompleted(true);
+  };
+
+  const handleScrollToStats = () => {
+    if (statsRef.current) {
+      statsRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollToCup = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const editDrink = (newDrink: Drink) => {
+    if(!currentDrink) return;
+    setCurrentDrink(newDrink);
+  };
+
+
   return (
-    <div className="flex flex-col justify-center w-full h-[calc(100vh-var(--header-height))] gap-4 bg-maomi-green/20">
-      <div className="flex relative flex-col justify-center items-center w-full h-full gap-1 p-10! ">
+    <div className="flex flex-col justify-center w-full h-[calc(100vh-var(--header-height))] gap-4 bg-maomi-green/20 overflow-scroll">
+      <div className="flex  relative flex-col justify-start items-center w-full h-full gap-1 ">
         <AnimatePresence>
           {currentDrink === null && (
             <div
               key="random-backdrop"
-              className="flex absolute z-100 w-full h-full  backdrop-blur-sm bg-neutral-700/40 flex-col justify-center items-center gap-1"
+              className="flex  absolute z-100 w-full h-full  backdrop-blur-sm bg-neutral-700/40 flex-col justify-center items-center gap-1"
             >
               <button
                 key="random-button"
@@ -385,82 +451,124 @@ export const RandomDrinkPage = () => {
               </button>
             </div>
           )}
-          <div className={'flex'}>
-            <motion.div layout className="flex flex-col gap-1 justify-center items-center relative overflow-hidden">
-                <FullCup className="relative z-10 " strokeColor='black' width={200} fillColor={[drinkBase?.assignedColor ?? '', drinkSecondary?.assignedColor ?? '']} /> 
-              { currentDrink &&
-                <AnimatedBobaCluster baseColor={drinkBoba?.assignedColor ?? '#6e4a32'} />
-              }
-            </motion.div>
-            {drinkStats && (
+          {!orderCompleted && (
+            <div className={'flex max-[460px]:flex-col justify-center flex-wrap gap-2 py-10!'}>
               <motion.div
                 layout
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: '200px' }}
-                transition={{ duration: STATS_APPEAR_DURATION, ease: 'easeOut', delay: STATS_APPEAR_DELAY }}
-                exit={{ opacity: 0 }}
-                key="drink-stats"
-                className="flex justify-center gap-6 flex-col p-4! font-bold"
+                initial={{ opacity: 1, x: 0 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+                exit={{ opacity: 0, x: -500 }}
+                className="flex flex-col gap-1 justify-center items-center relative overflow-hidden "
               >
-                <div>
-                  Солодкість:{' '}
-                  <div className="flex gap-1">
-                    {Array.from({ length: drinkStats.sweetness }).map((_, index) => (
-                      <BobaSvg
-                        key={index}
-                        baseColor="#6e4a32"
-                        radius={6}
-                        strokeWidth={2}
-                        appearDelay={ STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  Кислинка:{' '}
-                  <div className="flex gap-1">
-                    {Array.from({ length: drinkStats.sourness }).map((_, index) => (
-                      <BobaSvg
-                        key={index}
-                        baseColor="#2fa356"
-                        radius={6}
-                        strokeWidth={2}
-                        appearDelay={ STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  Гіркота:{' '}
-                  <div className="flex gap-1">
-                    {Array.from({ length: drinkStats.bitterness }).map((_, index) => (
-                      <BobaSvg
-                        key={index}
-                        baseColor="#704a9e"
-                        radius={6}
-                        strokeWidth={2}
-                        appearDelay={ STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  Солоність:{' '}
-                  <div className="flex gap-1">
-                    {Array.from({ length: drinkStats.saltiness }).map((_, index) => (
-                      <BobaSvg
-                        key={index}
-                        baseColor="#63bfb6"
-                        radius={6}
-                        strokeWidth={2}
-                        appearDelay={ STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
-                      />
-                    ))}
-                  </div>
+                <div className="relative overflow-hidden">
+                <FullCup
+                  ref={cupRef}
+                  className="relative z-10 "
+                  strokeColor="black"
+                  width={200}
+                  fillColor={[drinkBase?.assignedColor ?? '', drinkSecondary?.assignedColor ?? '']}
+                />
+                {currentDrink && (
+                  <AnimatedBobaCluster
+                    baseColor={drinkBoba?.assignedColor ?? '#6e4a32'}
+                    classname="absolute -translate-y-2 translate-x-5 "
+                  />
+                )}
                 </div>
               </motion.div>
-            )}
-          </div>
+              {drinkStats && (
+                <motion.div
+                  ref={statsRef}
+                  layout
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: '250px' }}
+                  transition={{ duration: STATS_APPEAR_DURATION, ease: 'easeOut', delay: STATS_APPEAR_DELAY }}
+                  exit={{ opacity: 0, x: 500, transition: { duration: STATS_APPEAR_DURATION, ease: 'easeOut', delay: 0 } }}
+                  key={`drink-stats ${orderCompleted}`}
+                  className="flex justify-center gap-6 flex-col font-bold bg-maomi-green/20  border-2 rounded-2xl border-maomi-green"
+                >
+                  <div className="flex flex-col justify-center leading-tight pb-1! text-stroke-small  text-white items-center gap-0 w-full bg-maomi-green rounded-t-xl ">
+                    <div className={'text-white text-center'}>
+                      {drinkBase?.name} <br /> {drinkSecondary?.name}
+                    </div>
+                    +<div className={'text-white'}>{drinkBoba?.name}</div>
+                  </div>
+
+                  <div className={'px-4!'}>
+                    Солодкість:{' '}
+                    <div className="flex gap-1">
+                      {Array.from({ length: drinkStats.sweetness }).map((_, index) => (
+                        <BobaSvg
+                          key={index}
+                          baseColor="#6e4a32"
+                          radius={6}
+                          strokeWidth={2}
+                          appearDelay={STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className={'px-4!'}>
+                    Кислинка:{' '}
+                    <div className="flex gap-1">
+                      {Array.from({ length: drinkStats.sourness }).map((_, index) => (
+                        <BobaSvg
+                          key={index}
+                          baseColor="#2fa356"
+                          radius={6}
+                          strokeWidth={2}
+                          appearDelay={STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className={'px-4!'}>
+                    Гіркота:{' '}
+                    <div className="flex gap-1">
+                      {Array.from({ length: drinkStats.bitterness }).map((_, index) => (
+                        <BobaSvg
+                          key={index}
+                          baseColor="#704a9e"
+                          radius={6}
+                          strokeWidth={2}
+                          appearDelay={STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <div className={'px-4!'}>
+                    Солоність:{' '}
+                    <div className="flex gap-1">
+                      {Array.from({ length: drinkStats.saltiness }).map((_, index) => (
+                        <BobaSvg
+                          key={index}
+                          baseColor="#63bfb6"
+                          radius={6}
+                          strokeWidth={2}
+                          appearDelay={STATS_APPEAR_DELAY + STATS_APPEAR_DURATION + index * 0.1}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <DrinkConfiguration
+                    onRecreate={handleRecreateDrink}
+                    onSubmit={handleSubmitDrink}
+                    editDrink={editDrink}
+                    currentDrink={currentDrink}
+                    ingredients={currentDrink?.ingredients ?? []}
+                    allIngredients={ingredients}
+                  />
+                </motion.div>
+              )}
+            </div>
+          )}
+          {orderCompleted && orderId  && (
+            <div className="flex flex-col w-full h-full justify-center items-center gap-1 py-10 text-[24px] font-bold text-maomi-green">
+              <p>Замовлення</p>
+              <p className={'text-[80px]'} >#{orderId}</p>
+            </div>
+          )}
         </AnimatePresence>
       </div>
     </div>

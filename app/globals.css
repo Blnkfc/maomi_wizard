@@ -9,3 +9,15 @@
 @theme {
   --color-maomi-green: #046f41;
 }
+
+@utility text-stroke-small {
+  text-shadow:
+    1px 1px 0 #19191b,
+    -1px 1px 0 #19191b,
+    1px -1px 0 #19191b,
+    -1px -1px 0 #19191b,
+    1px 0 0 #19191b,
+    -1px 0 0 #19191b,
+    0 1px 0 #19191b,
+    0 -1px 0 #19191b;
+}
